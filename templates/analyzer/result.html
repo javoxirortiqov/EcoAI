@@ -1,0 +1,199 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoAI | Tahlil natijasi</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <div class="logo">
+        <span>Eco</span>AI
+    </div>
+
+    <nav>
+        <a href="{% url 'upload_image' %}">Yangi tahlil</a>
+    </nav>
+
+</header>
+
+<main>
+
+<section class="result-section">
+
+    <div class="section-title">
+
+        <div class="badge">
+            ECOAI AI ANALYSIS
+        </div>
+
+        <h1>
+            Ekologik tahlil
+        </h1>
+
+        <p>
+            Sun'iy intellekt rasmni ekologik nuqtai nazardan tahlil qildi.
+        </p>
+
+    </div>
+
+
+    <div class="result-grid">
+
+        <div class="image-card">
+
+            <h3>
+                📷 Yuklangan rasm
+            </h3>
+
+            {% if analysis.image %}
+
+            <img
+                src="{{ analysis.image.url }}"
+                alt="EcoAI ekologik tahlil rasmi"
+            >
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="result-card">
+
+            <div class="result-header">
+
+                <span>
+                    🤖 AI NATIJA
+                </span>
+
+                <span class="status">
+                    TAYYOR
+                </span>
+
+            </div>
+
+
+            <div class="score-container">
+
+                <div
+                    class="score-circle"
+                    style="--score: {{ analysis.eco_score }}%;"
+                >
+
+                    <div class="score-number">
+                        <strong>{{ analysis.eco_score }}</strong>
+                        <span>/100</span>
+                    </div>
+
+                </div>
+
+                <h2>
+                    EcoScore
+                </h2>
+
+                <p>
+                    Ekologik holat ko'rsatkichi
+                </p>
+
+            </div>
+
+
+            <div class="confidence">
+
+                <div class="confidence-top">
+
+                    <span>
+                        AI ishonchliligi
+                    </span>
+
+                    <strong>
+                        {{ analysis.confidence }}%
+                    </strong>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        style="width: {{ analysis.confidence }}%;"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <div class="result-box problem-box">
+
+                <div class="box-title">
+                    🔎 ANIQLANGAN MUAMMO
+                </div>
+
+                <div class="box-content">
+                    {{ analysis.result|linebreaks }}
+                </div>
+
+            </div>
+
+
+            <div class="result-box solution-box">
+
+                <div class="box-title">
+                    💡 YECHIM VA TAVSIYA
+                </div>
+
+                <div class="box-content">
+                    {{ analysis.recommendation|linebreaks }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="result-actions">
+
+        <a
+            href="{% url 'upload_image' %}"
+            class="hero-button"
+        >
+            🔄 Yangi rasm tahlil qilish
+        </a>
+
+        <a
+            href="{% url 'upload_image' %}"
+            class="secondary-button"
+        >
+            🏠 Bosh sahifa
+        </a>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<footer>
+
+    <div class="logo">
+        <span>Eco</span>AI
+    </div>
+
+    <p>
+        Sun'iy intellekt yordamida yashil kelajak 🌱
+    </p>
+
+</footer>
+
+</body>
+</html>

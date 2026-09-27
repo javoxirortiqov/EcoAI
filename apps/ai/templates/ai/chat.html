@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoAI - Ekologik Yordamchi</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: radial-gradient(circle at 15% 15%, #0d2818 0%, #08121e 50%, #030712 100%);
+            color: #e2e8f0;
+        }
+
+        .app-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 16px 24px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 12px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            color: #4ade80;
+            letter-spacing: -0.5px;
+            text-shadow: 0 0 12px rgba(74, 222, 128, 0.3);
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .clear-btn {
+            background: rgba(239, 68, 68, 0.12);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .clear-btn:hover {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+        }
+
+        .chat-card {
+            flex: 1;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .messages-box {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .messages-box::-webkit-scrollbar {
+            width: 6px;
+        }
+        .messages-box::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+        }
+
+        .welcome-state {
+            margin: auto;
+            text-align: center;
+            color: #94a3b8;
+            max-width: 500px;
+        }
+
+        .welcome-state h2 {
+            color: #4ade80;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .msg-row {
+            display: flex;
+            flex-direction: column;
+            max-width: 80%;
+        }
+
+        .msg-row.user {
+            align-self: flex-end;
+        }
+
+        .msg-row.ai {
+            align-self: flex-start;
+        }
+
+        .msg-author {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 4px;
+            padding: 0 4px;
+        }
+
+        .msg-row.user .msg-author {
+            text-align: right;
+        }
+
+        .bubble {
+            padding: 16px 20px;
+            border-radius: 16px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .user .bubble {
+            background: linear-gradient(135deg, #15803d, #166534);
+            color: #ffffff;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 12px rgba(21, 128, 61, 0.25);
+        }
+
+        .ai .bubble {
+            background: #1e293b;
+            color: #f1f5f9;
+            border-left: 4px solid #22c55e;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .bubble p { margin-bottom: 10px; }
+        .bubble p:last-child { margin-bottom: 0; }
+        .bubble ul, .bubble ol { margin-left: 20px; margin-bottom: 10px; }
+        .bubble code {
+            background: #0f172a;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #38bdf8;
+        }
+        .bubble pre {
+            background: #0f172a;
+            padding: 14px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border: 1px solid #334155;
+        }
+        .bubble pre code { padding: 0; background: transparent; color: #e2e8f0; }
+        .bubble table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+        .bubble th, .bubble td { border: 1px solid #334155; padding: 8px 12px; }
+        .bubble th { background: #0f172a; color: #4ade80; }
+
+        .input-area {
+            padding: 16px 20px;
+            background: rgba(15, 23, 42, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        form.chat-form {
+            display: flex;
+            gap: 12px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: white;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #22c55e;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);
+        }
+
+        button.send-btn {
+            padding: 16px 28px;
+            border: none;
+            border-radius: 12px;
+            background: #22c55e;
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button.send-btn:hover {
+            background: #16a34a;
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
+        }
+
+        .examples {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .example-tag {
+            background: #1e293b;
+            color: #94a3b8;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .example-tag:hover {
+            background: #334155;
+            color: #fff;
+            border-color: #22c55e;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <div class="brand">
+            <div class="logo">🌱 EcoAI</div>
+            <div class="subtitle">Ekologiya va tabiat bo‘yicha aqlli yordamchi</div>
+        </div>
+
+        {% if chat_history %}
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" name="clear" value="1" class="clear-btn">
+                🗑️ Tarixni tozalash
+            </button>
+        </form>
+        {% endif %}
+    </div>
+
+    <div class="chat-card">
+        <div class="messages-box" id="messagesBox">
+            {% if chat_history %}
+                {% for msg in chat_history %}
+                    <div class="msg-row {{ msg.role }}">
+                        <div class="msg-author">
+                            {% if msg.role == 'user' %}Siz{% else %}🌱 EcoAI{% endif %}
+                        </div>
+                        <div class="bubble">
+                            {{ msg.content|safe }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="welcome-state">
+                    <h2>Salom! 👋</h2>
+                    <p>Men EcoAI ekologik AI yordamchisiman.</p>
+                    <p>Atrof-muhit, tabiat va ekologiyaga oid istalgan savolingizni bering!</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="input-area">
+            <form method="POST" class="chat-form">
+                {% csrf_token %}
+                <input
+                    type="text"
+                    name="question"
+                    placeholder="Savolingizni yozing (Masalan: Suvni tejash uchun nima qilish kerak?)"
+                    required
+                    autocomplete="off"
+                    autofocus
+                >
+                <button type="submit" class="send-btn">Yuborish 🚀</button>
+            </form>
+
+            <div class="examples">
+                <span class="example-tag" onclick="fillInput('💧 Suvni tejash usullari qanday?')">💧 Suv tejash</span>
+                <span class="example-tag" onclick="fillInput('🌳 Daraxtlarning ekologiyaga foydasi')">🌳 Daraxtlar</span>
+                <span class="example-tag" onclick="fillInput('♻️ Chiqindilarni saralash tartibi')">♻️ Chiqindi</span>
+                <span class="example-tag" onclick="fillInput('🌍 Iqlim o‘zgarishi sabablari nimada?')">🌍 Iqlim</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const messagesBox = document.getElementById('messagesBox');
+    if (messagesBox) {
+        messagesBox.scrollTop = messagesBox.scrollHeight;
+    }
+
+    function fillInput(text) {
+        const input = document.querySelector('input[name="question"]');
+        if (input) {
+            input.value = text;
+            input.focus();
+        }
+    }
+</script>
+
+</body>
+</html>
